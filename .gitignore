@@ -44,3 +44,9 @@ next-env.d.ts
 firebase-debug.log
 firestore-debug.log
 node_modules
+
+# Junk files (prevent Jules artifacts from being committed)
+pnpm-lock.yaml
+resolve_conflicts.py
+start.log
+*.log
