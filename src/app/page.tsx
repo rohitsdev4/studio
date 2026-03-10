@@ -4,7 +4,7 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Bed, HeartPulse, Mail, MapPin, Phone, Quote, Stethoscope, Syringe, User, MessageSquare, Building } from 'lucide-react';
+import { Bed, HeartPulse, Mail, MapPin, Phone, Quote, Stethoscope, Syringe, User, MessageSquare, Building, Loader2 } from 'lucide-react';
 import Image from 'next/image';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -414,7 +414,7 @@ function ContactSection() {
                   name="name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Full Name</FormLabel>
+                      <FormLabel>Full Name <span className="text-destructive">*</span></FormLabel>
                       <FormControl>
                         <Input placeholder="John Doe" {...field} />
                       </FormControl>
@@ -427,7 +427,7 @@ function ContactSection() {
                   name="email"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Email Address</FormLabel>
+                      <FormLabel>Email Address <span className="text-destructive">*</span></FormLabel>
                       <FormControl>
                         <Input placeholder="you@example.com" {...field} />
                       </FormControl>
@@ -453,7 +453,7 @@ function ContactSection() {
                   name="message"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Message</FormLabel>
+                      <FormLabel>Message <span className="text-destructive">*</span></FormLabel>
                       <FormControl>
                         <Textarea placeholder="Tell us how we can help..." className="min-h-[120px]" {...field} />
                       </FormControl>
@@ -462,7 +462,14 @@ function ContactSection() {
                   )}
                 />
                 <Button type="submit" size="lg" disabled={isSubmitting} style={{ backgroundColor: 'hsl(var(--accent))', color: 'hsl(var(--accent-foreground))' }} className="w-full hover:bg-accent/90">
-                  {isSubmitting ? 'Sending...' : 'Send Message'}
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Sending...
+                    </>
+                  ) : (
+                    'Send Message'
+                  )}
                 </Button>
               </form>
             </Form>
