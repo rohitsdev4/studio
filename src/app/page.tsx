@@ -4,7 +4,7 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Bed, HeartPulse, Mail, MapPin, Phone, Quote, Stethoscope, Syringe, User, MessageSquare, Building } from 'lucide-react';
+import { Bed, Mail, MapPin, Phone, Quote, Stethoscope, Syringe, User, MessageSquare, Building, HeartPulse } from 'lucide-react';
 import Image from 'next/image';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -13,7 +13,6 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-import { sendContactEmail } from '@/ai/flows/send-contact-email';
 import * as React from 'react';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel"
 import { ContactFormInputSchema } from '@/ai/schemas/contact-form';
@@ -139,7 +138,7 @@ function Header() {
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto flex h-16 max-w-7xl items-center justify-between px-4 md:px-6">
         <a href="#" className="flex items-center gap-2">
-          <HeartPulse className="h-7 w-7 text-primary" />
+          <Image src="/logo.svg" alt="Genuine Hospi Logo" width={32} height={32} />
           <span className="font-headline text-2xl font-bold text-foreground">
             Genuine Hospi
           </span>
@@ -354,15 +353,31 @@ function ContactSection() {
   async function onSubmit(values: z.infer<typeof ContactFormInputSchema>) {
     setIsSubmitting(true);
     try {
-      const response = await sendContactEmail(values);
-      if (response.success) {
+      // Create a FormData object to send to FormSubmit
+      const formData = new FormData();
+      formData.append('name', values.name);
+      formData.append('email', values.email);
+      if (values.phone) {
+        formData.append('phone', values.phone);
+      }
+      formData.append('message', values.message);
+
+      // Disable captcha for better UX
+      formData.append('_captcha', 'false');
+
+      const response = await fetch('https://formsubmit.co/ajax/rohitsingh8885882@gmail.com', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (response.ok) {
         toast({
           title: 'Message Sent!',
           description: "Thank you for reaching out. We'll get back to you shortly.",
         });
         form.reset();
       } else {
-        throw new Error(response.error || 'An unknown error occurred');
+        throw new Error('Failed to send email via FormSubmit');
       }
     } catch (error) {
       toast({
@@ -374,7 +389,7 @@ function ContactSection() {
       setIsSubmitting(false);
     }
   }
-  
+
   return (
     <section id="contact" className="w-full py-16 md:py-24 bg-card">
       <div className="container mx-auto max-w-7xl px-4 md:px-6">
@@ -480,7 +495,7 @@ function Footer() {
       <div className="container mx-auto grid max-w-7xl grid-cols-1 gap-8 px-4 md:grid-cols-3 md:px-6">
         <div>
           <a href="#" className="flex items-center gap-2">
-            <HeartPulse className="h-7 w-7 text-primary" />
+            <Image src="/logo.svg" alt="Genuine Hospi Logo" width={32} height={32} />
             <span className="font-headline text-2xl font-bold text-foreground">Genuine Hospi</span>
           </a>
           <p className="mt-2 text-muted-foreground">Your partner in building world-class hospitals.</p>
